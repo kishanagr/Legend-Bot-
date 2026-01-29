@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>WALEED LEGEND™ BOT PANEL</title>
+  <link rel="icon" href="https://i.ibb.co.com/3yvzY3F/takla.png" type="image/png">
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Rajdhani:wght@600&display=swap');
+    
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: linear-gradient(135deg, #000000, #1a0028, #000000);
+      color: #00ff00;
+      font-family: 'Rajdhani', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    .header {
+      text-align: center;
+      padding: 30px 0;
+      background: rgba(255,0,255,0.1);
+      border-radius: 20px;
+      margin-bottom: 30px;
+      border: 2px solid #ff00ff;
+      box-shadow: 0 0 30px rgba(255,0,255,0.6);
+    }
+    .header h1 {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 3.5rem;
+      background: linear-gradient(45deg, #ff00ff, #00ffff, #ff00ff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: 0 0 20px magenta;
+    }
+    .header p {
+      color: #00ffff;
+      font-size: 1.4rem;
+      margin-top: 10px;
+    }
+    .card {
+      background: rgba(20,0,40,0.8);
+      border: 2px solid #ff00ff;
+      border-radius: 15px;
+      padding: 25px;
+      margin-bottom: 25px;
+      box-shadow: 0 0 25px rgba(255,0,255,0.4);
+      backdrop-filter: blur(10px);
+    }
+    input, textarea, button {
+      width: 100%;
+      padding: 15px;
+      margin: 12px 0;
+      border-radius: 10px;
+      border: 2px solid #ff00ff;
+      background: rgba(0,0,0,0.7);
+      color: #00ff00;
+      font-size: 1rem;
+    }
+    input:focus, textarea:focus {
+      outline: none;
+      box-shadow: 0 0 15px magenta;
+    }
+    button {
+      background: linear-gradient(45deg, #ff00ff, #00ffff);
+      color: black;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.4s;
+      font-size: 1.3rem;
+    }
+    button:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 30px cyan;
+    }
+    .status {
+      text-align: center;
+      font-size: 1.5rem;
+      padding: 20px;
+      background: rgba(0,255,0,0.1);
+      border-radius: 15px;
+      border: 2px dashed #00ff00;
+      margin: 20px 0;
+    }
+    .log-box {
+      height: 300px;
+      overflow-y: auto;
+      background: #000;
+      border: 2px solid #00ffff;
+      border-radius: 10px;
+      padding: 15px;
+      color: #00ff00;
+      font-family: 'Courier New', monospace;
+      margin-top: 20px;
+    }
+    .groups {
+      color: #ff00ff;
+      font-size: 1.3rem;
+      text-align: center;
+    }
+    .footer {
+      text-align: center;
+      padding: 30px;
+      color: #ff00ff;
+      font-size: 1.4rem;
+      margin-top: 50px;
+    }
+    .blink {
+      animation: blink 1s infinite;
+    }
+    @keyframes blink {
+      0%,100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+    .legend {
+      font-size: 2rem;
+      color: #ff00ff;
+      text-shadow: 0 0 20px magenta;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>WALEED LEGEND™</h1>
+      <p>🔥 ULTIMATE DARINDA BOT PANEL 🔥</p>
+      <p class="blink">🟢 BOT STATUS: <span id="status">NOT STARTED</span></p>
+    </div>
+
+    <div class="card">
+      <h2 style="text-align:center; color:#00ffff;">📱 BOT LOGIN PANEL</h2><br>
+      <form id="loginForm">
+        <input type="text" id="adminID" placeholder="🔥 YOUR FACEBOOK UID (Admin ID)" required />
+        <input type="text" id="prefix" placeholder="🔥 PREFIX (Default: /)" value="/" />
+        <textarea id="cookies" rows="8" placeholder="🔥 PASTE YOUR APPSTATE/COOKIES HERE (JSON FORMAT)" required></textarea>
+        <button type="submit">🚀 START WALEED LEGEND BOT 🚀</button>
+      </form>
+    </div>
+
+    <div class="card">
+      <h2 style="text-align:center; color:#ff00ff;">📊 LIVE STATUS</h2>
+      <div class="status" id="liveStatus">
+        Waiting for bot to connect...
+      </div>
+      <div class="groups">
+        🏠 JOINED GROUPS: <span id="groupCount">0</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2 style="text-align:center; color:#00ffff;">📜 LIVE LOGS</h2>
+      <div class="log-box" id="logs">
+        <div style="color:yellow;">WALEED LEGEND BOT PANEL LOADED SUCCESSFULLY</div>
+      </div>
+    </div>
+
+    <div class="footer">
+      <p class="legend">MADE BY WALEED LEGEND™</p>
+      <p style="color:cyan;">SAB HATER KI MAA CHODNE WALA BOT 🔥</p>
+      <p style="margin-top:20px; color:#ff00ff;">© 2025 WALEED LEGEND - ALL RIGHTS RESERVED</p>
+    </div>
+  </div>
+
+  <script>
+    const socket = io();
+    const logs = document.getElementById('logs');
+    const status = document.getElementById('status');
+    const liveStatus = document.getElementById('liveStatus');
+    const groupCount = document.getElementById('groupCount');
+
+    // Auto scroll logs
+    function addLog(msg) {
+      const div = document.createElement('div');
+      div.innerHTML = msg;
+      logs.appendChild(div);
+      logs.scrollTop = logs.scrollHeight;
+    }
+
+    socket.on('botlog', (msg) => {
+      addLog(msg);
+      if (msg.includes('ONLINE') || msg.includes('Started')) {
+        status.textContent = 'ONLINE 🔥';
+        status.style.color = '#00ff00';
+        liveStatus.innerHTML = '🟢 <b>WALEED LEGEND BOT IS FULLY ACTIVE 🔥</b>';
+      }
+      if (msg.includes('ERROR') || msg.includes('Failed')) {
+        status.textContent = 'ERROR ⚠️';
+        status.style.color = 'red';
+      }
+    });
+
+    socket.on('groupsUpdate', (groups) => {
+      groupCount.textContent = groups.length;
+    });
+
+    document.getElementById('loginForm').onsubmit = async (e) => {
+      e.preventDefault();
+      
+      const cookies = document.getElementById('cookies').value.trim();
+      const adminID = document.getElementById('adminID').value.trim();
+      const prefix = document.getElementById('prefix').value.trim() || '/';
+
+      if (!cookies || !adminID) {
+        Swal.fire('Error', 'Cookies aur Admin ID dono daal bhosdike!', 'error');
+        return;
+      }
+
+      try {
+        JSON.parse(cookies); // Check valid JSON
+      } catch {
+        Swal.fire('Invalid Cookies', 'Cookies JSON format mein daal na madarchod!', 'error');
+        return;
+      }
+
+      const btn = e.target.querySelector('button');
+      btn.innerHTML = '🔥 STARTING WALEED LEGEND BOT...';
+      btn.disabled = true;
+
+      fetch('/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ cookies, adminID, prefix })
+      })
+      .then(r => r.text())
+      .then(html => {
+        document.body.innerHTML = html;
+      })
+      .catch(() => {
+        Swal.fire('SUCCESS', 'WALEED LEGEND BOT START HO GAYA 🔥', 'success');
+        status.textContent = 'STARTING...';
+      });
+    };
+
+    // Welcome message
+    setTimeout(() => {
+      addLog('<div style="color:magenta; font-size:1.3rem; text-align:center;">🔥 WALEED LEGEND DASHBOARD READY 🔥</div>');
+    }, 1000);
+  </script>
+</body>
+  </html>
